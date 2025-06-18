@@ -69,7 +69,7 @@ parser.add_argument(
     "--batch-size",
     type=int,
     dest="batch_size",
-    default=8,
+    default=0,
     help="Batch size for batched inference, reduce if you run out of memory, "
     "set to 0 for original whisper longform inference",
 )
@@ -223,7 +223,7 @@ if info.language in punct_model_langs:
 
     words_list = list(map(lambda x: x["word"], wsm))
 
-    labled_words = punct_model.predict(words_list, chunk_size=230)
+    labled_words = punct_model.predict(words_list)
 
     ending_puncts = ".?!"
     model_puncts = ".,;:!?"

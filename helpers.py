@@ -250,7 +250,7 @@ langs_to_iso = {
 
 
 def create_config(output_dir):
-    DOMAIN_TYPE = "telephonic"
+    DOMAIN_TYPE = "general"
     CONFIG_LOCAL_DIRECTORY = "nemo_msdd_configs"
     CONFIG_FILE_NAME = f"diar_infer_{DOMAIN_TYPE}.yaml"
     MODEL_CONFIG_PATH = os.path.join(CONFIG_LOCAL_DIRECTORY, CONFIG_FILE_NAME)
@@ -277,8 +277,8 @@ def create_config(output_dir):
         json.dump(meta, fp)
         fp.write("\n")
 
-    pretrained_vad = "vad_multilingual_marblenet"
-    pretrained_speaker_model = "titanet_large"
+    pretrained_vad = config["diarizer"]["vad"]["model_path"]
+    pretrained_speaker_model = config["diarizer"]["speaker_embeddings"]["model_path"]
     config.num_workers = 0
     config.diarizer.manifest_filepath = os.path.join(data_dir, "input_manifest.json")
     config.diarizer.out_dir = (
@@ -293,11 +293,15 @@ def create_config(output_dir):
 
     # Here, we use our in-house pretrained NeMo VAD model
     config.diarizer.vad.model_path = pretrained_vad
-    config.diarizer.vad.parameters.onset = 0.8
-    config.diarizer.vad.parameters.offset = 0.6
-    config.diarizer.vad.parameters.pad_offset = -0.05
+    config.diarizer.vad.parameters.onset = config["diarizer"]["vad"]["parameters"]["onset"]
+    config.diarizer.vad.parameters.offset =config["diarizer"]["vad"]["parameters"]["offset"]
+    config.diarizer.vad.parameters.pad_onset = config["diarizer"]["vad"]["parameters"]["pad_onset"]
+    config.diarizer.vad.parameters.pad_offset = config["diarizer"]["vad"]["parameters"]["pad_offset"]
+    config.diarizer.vad.parameters.min_duration_on = config["diarizer"]["vad"]["parameters"]["min_duration_on"]
+    config.diarizer.vad.parameters.min_duration_off = config["diarizer"]["vad"]["parameters"]["min_duration_off"]
+    config.diarizer.vad.parameters.filter_speech_first = config["diarizer"]["vad"]["parameters"]["filter_speech_first"]
     config.diarizer.msdd_model.model_path = (
-        "diar_msdd_telephonic"  # Telephonic speaker diarization model
+        config["diarizer"]["msdd_model"]["model_path"]  # Telephonic speaker diarization model
     )
 
     return config
